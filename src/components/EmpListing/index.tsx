@@ -7,8 +7,6 @@ import { MdModeEdit } from "react-icons/md";
 import { FaTrashAlt } from "react-icons/fa";
 import Image from "next/image";
 
-
-
 type Company = {
   name: string;
 };
@@ -23,17 +21,14 @@ type users = {
 };
 const EmpListing = () => {
   // start pagination
-  const rowsPerPage = 4;
+  const rowsPerPage = 6;
   const [data, setData] = useState([]);
   const [currentData, setCurrentData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const endIndex = currentPage*rowsPerPage;
-  const startIndex = endIndex-rowsPerPage;
-
-
-
-
- 
+  const endIndex = currentPage * rowsPerPage;
+  const startIndex = endIndex - rowsPerPage;
+  const totalPages = data.length / rowsPerPage;
+  const [num, setNum] = useState(1);
 
   useEffect(() => {
     fetch("https://dummyjson.com/users")
@@ -42,41 +37,36 @@ const EmpListing = () => {
         const users = data.users;
         setData(users);
         if (users.length > 0) {
-          setCurrentData(users.slice(startIndex,endIndex));
+          setCurrentData(users.slice(startIndex, endIndex));
         }
       })
       .catch((err) => {
         console.log("errorrrrrr");
       });
-  }, [currentPage]);
+  }, [currentPage, num]);
 
-
-  const GoPrevious=():void=>{
-    if(currentPage==1){
-      return;
+  const GoPrevious = (): void => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+      setNum((prev) => (prev > 1 ? prev - 1 : prev));
     }
-    setCurrentPage(currentPage-1);
-  }
-  const GoNext=():void=>{
-    if(data.length<endIndex){
-      return;
-    }
-    setCurrentPage(currentPage+1);
-  }
+  };
 
-  // const GoPrevious = (): void => {
-  //   if (currentPage > 1) {
-  //     setCurrentPage(currentPage - 1);
-  //   }
-  // };
-  
-  // const GoNext = (): void => {
-  //   if (endIndex < data.length) {
-  //     setCurrentPage(currentPage + 1);
-  //   }
-  // };
-  
-  
+  const GoNext = (): void => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+    if (num < totalPages - 2) {
+      setNum(num + 1);
+    }
+
+  };
+  const handleCurrentPage = (value: number): void => {
+    if (value >= 1 && value <= totalPages) {
+      setCurrentPage(value);
+    }
+  };
+
   return (
     <div className="container">
       <div className="">
@@ -168,23 +158,31 @@ const EmpListing = () => {
             </tbody>
           </table>
           <div className="flex justify-center items-center mt-4">
-            <button className="px-3 py-2 bg-gray-200 text-gray-600  hover:bg-gray-300 duration-300"onClick={GoPrevious}>
+            <button
+              className="px-3 py-2 bg-gray-200 text-gray-600  hover:bg-gray-300 duration-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              onClick={GoPrevious}
+              disabled={currentPage == 1}
+            >
               <GrPrevious />
             </button>
-            <div className="flex items-center">
-              <span className="mx-2">Page {currentPage} of 10</span>
-              <button className="px-3 py-1 border border-gray-300  mx-1">
-                {currentPage}
-              </button>
-              {/* <button className="px-3 py-1 border border-gray-300  mx-1">
-                2
-              </button>
-              <button className="px-3 py-1 border border-gray-300  mx-1">
-                3
-              </button> */}
-              {/* يمكنك إضافة المزيد من الأزرار حسب الحاجة */}
+            {/* disabled={page > totalPages} */}
+            <div>
+              {[num, num + 1, num + 2].map((page: number) => (
+                <button
+                  className={`px-3 py-1 border border-gray-300  mx-1 ${
+                    currentPage === page ? "bg-gray-200" : ""
+                  }`}
+                  onClick={() => handleCurrentPage(page)}
+                >
+                  {page}
+                </button>
+              ))}
             </div>
-            <button className="px-3 py-2 bg-gray-200 text-gray-600  hover:bg-gray-300 duration-300" onClick={GoNext}>
+            <button
+              className={`px-3 py-2 bg-gray-200 text-gray-600  hover:bg-gray-300 duration-300 disabled:bg-gray-100 disabled:cursor-not-allowed`}
+              disabled={currentPage === totalPages}
+              onClick={GoNext}
+            >
               <GrNext />{" "}
             </button>
           </div>
@@ -195,3 +193,76 @@ const EmpListing = () => {
 };
 
 export default EmpListing;
+
+// const GoPrevious = (): void => {
+//   if (currentPage > 1) {
+//     setCurrentPage((prev) => prev - 1);
+//     setNum((prev) => (prev > 1 ? prev - 1 : prev));
+//   }
+// };
+
+// const GoNext = (): void => {
+//   if (currentPage < totalPages) {
+//     setCurrentPage((prev) => prev + 1);
+//     if (num < totalPages - 2) {
+//       setNum((prev) => prev + 1);
+//     }
+//   }
+// };
+
+// const MarkASCurrentPage = (value: number): void => {
+//   if (value >= 1 && value <= totalPages) {
+//     setCurrentPage(value);
+//   }
+// };
+
+{
+  /* <div className="flex items-center">
+              <span className="mx-2">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                className={`px-3 py-1 border border-gray-300  mx-1 ${
+                  currentPage == num ? "bg-gray-200" : ""
+                }`}
+                onClick={() => MarkASCurrentPage(num)}
+              >
+                {num}
+
+              </button>
+
+              <button
+                className={`px-3 py-1 border border-gray-300  mx-1 ${
+                  currentPage == num+1  ? "bg-gray-200" : ""
+                }`}
+                onClick={() => MarkASCurrentPage(num+1)}
+              >
+                {num+1}
+                </button>
+              <button
+                className={`px-3 py-1 border border-gray-300  mx-1 ${
+                  currentPage == num+2 ? "bg-gray-200" : ""
+                }`}
+                onClick={() => MarkASCurrentPage(num+2)}
+              >
+                {num+2}
+              </button>
+            </div> */
+}
+
+{
+  /* <div className="flex items-center">
+              {[num, num + 1, num + 2].map((page) => (
+                <button
+                  key={page}
+                  className={`px-3 py-1 border border-gray-300 mx-1 ${
+                    currentPage === page ? "bg-gray-200" : ""
+                  }`}
+                  onClick={() => MarkASCurrentPage(page)}
+                  disabled={page > totalPages}
+                >
+                  {page}
+                </button>
+              ))}
+            </div> */
+}
