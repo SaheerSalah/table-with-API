@@ -1,11 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { MdNavigateNext } from "react-icons/md";
-import { GrNext } from "react-icons/gr";
-import { GrPrevious } from "react-icons/gr";
 import { MdModeEdit } from "react-icons/md";
 import { FaTrashAlt } from "react-icons/fa";
 import Image from "next/image";
+import Pagination from "../Pagination";
 
 type Company = {
   name: string;
@@ -157,34 +156,9 @@ const EmpListing = () => {
               ))}
             </tbody>
           </table>
-          <div className="flex justify-center items-center mt-4">
-            <button
-              className="px-3 py-2 bg-gray-200 text-gray-600  hover:bg-gray-300 duration-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
-              onClick={GoPrevious}
-              disabled={currentPage == 1}
-            >
-              <GrPrevious />
-            </button>
-            {/* disabled={page > totalPages} */}
-            <div>
-              {[num, num + 1, num + 2].map((page: number) => (
-                <button
-                  className={`px-3 py-1 border border-gray-300  mx-1 ${
-                    currentPage === page ? "bg-gray-200" : ""
-                  }`}
-                  onClick={() => handleCurrentPage(page)}
-                >
-                  {page}
-                </button>
-              ))}
-            </div>
-            <button
-              className={`px-3 py-2 bg-gray-200 text-gray-600  hover:bg-gray-300 duration-300 disabled:bg-gray-100 disabled:cursor-not-allowed`}
-              disabled={currentPage === totalPages}
-              onClick={GoNext}
-            >
-              <GrNext />{" "}
-            </button>
+          <div>
+            <Pagination
+            rowsPerPage={5} />
           </div>
         </div>
       </div>
