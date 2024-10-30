@@ -20,51 +20,73 @@ type users = {
 };
 const EmpListing = () => {
   // start pagination
-  const rowsPerPage = 6;
   const [data, setData] = useState([]);
-  const [currentData, setCurrentData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const endIndex = currentPage * rowsPerPage;
-  const startIndex = endIndex - rowsPerPage;
-  const totalPages = data.length / rowsPerPage;
-  const [num, setNum] = useState(1);
+  const rowsPerPage = 6;
+
+  // حساب عدد الصفحات
+  const totalPages = Math.ceil(data.length / rowsPerPage);
+
+  // حساب البيانات التي يجب عرضها في الصفحة الحالية
+  const currentData = data.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
 
   useEffect(() => {
     fetch("https://dummyjson.com/users")
-      .then((responsive) => responsive.json())
-      .then((data) => {
-        const users = data.users;
-        setData(users);
-        if (users.length > 0) {
-          setCurrentData(users.slice(startIndex, endIndex));
-        }
-      })
-      .catch((err) => {
-        console.log("errorrrrrr");
-      });
-  }, [currentPage, num]);
+      .then((res) => res.json())
+      .then((data) => setData(data.users))
+      .catch((err) => console.error("Failed to fetch users:", err));
+  }, []);
 
-  const GoPrevious = (): void => {
-    if (currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
-      setNum((prev) => (prev > 1 ? prev - 1 : prev));
-    }
-  };
+  const handlePageChange = (page: number) => setCurrentPage(page);
 
-  const GoNext = (): void => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-    if (num < totalPages - 2) {
-      setNum(num + 1);
-    }
+  // const rowsPerPage = 6;
+  // const [data, setData] = useState([]);
+  // const [currentData, setCurrentData] = useState([]);
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const endIndex = currentPage * rowsPerPage;
+  // const startIndex = endIndex - rowsPerPage;
+  // const totalPages = data.length / rowsPerPage;
+  // const [num, setNum] = useState(1);
 
-  };
-  const handleCurrentPage = (value: number): void => {
-    if (value >= 1 && value <= totalPages) {
-      setCurrentPage(value);
-    }
-  };
+  // useEffect(() => {
+  //   fetch("https://dummyjson.com/users")
+  //     .then((responsive) => responsive.json())
+  //     .then((data) => {
+  //       const users = data.users;
+  //       setData(users);
+  //       if (users.length > 0) {
+  //         setCurrentData(users.slice(startIndex, endIndex));
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log("errorrrrrr");
+  //     });
+  // }, [currentPage, num]);
+
+  // const GoPrevious = (): void => {
+  //   if (currentPage > 1) {
+  //     setCurrentPage((prev) => prev - 1);
+  //     setNum((prev) => (prev > 1 ? prev - 1 : prev));
+  //   }
+  // };
+
+  // const GoNext = (): void => {
+  //   if (currentPage < totalPages) {
+  //     setCurrentPage(currentPage + 1);
+  //   }
+  //   if (num < totalPages - 2) {
+  //     setNum(num + 1);
+  //   }
+
+  // };
+  // const handleCurrentPage = (value: number): void => {
+  //   if (value >= 1 && value <= totalPages) {
+  //     setCurrentPage(value);
+  //   }
+  // };
 
   return (
     <div className="container">
@@ -158,7 +180,11 @@ const EmpListing = () => {
           </table>
           <div>
             <Pagination
-            rowsPerPage={5} />
+              rowsPerPage={5}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
       </div>
