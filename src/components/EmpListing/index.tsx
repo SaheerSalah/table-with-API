@@ -22,7 +22,7 @@ const EmpListing = () => {
   // start pagination
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 6;
+  const rowsPerPage = 5;
 
   // حساب عدد الصفحات
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -37,7 +37,7 @@ const EmpListing = () => {
     fetch("https://dummyjson.com/users")
       .then((res) => res.json())
       .then((data) => setData(data.users))
-      .catch((err) => console.error("Failed to fetch users:", err));
+      .catch((error) => console.error("Failed to fetch users:", error));
   }, []);
 
   const handlePageChange = (page: number) => setCurrentPage(page);
@@ -180,7 +180,6 @@ const EmpListing = () => {
           </table>
           <div>
             <Pagination
-              rowsPerPage={5}
               totalPages={totalPages}
               currentPage={currentPage}
               onPageChange={handlePageChange}
