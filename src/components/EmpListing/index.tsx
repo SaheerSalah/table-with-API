@@ -23,7 +23,7 @@ type users = {
 const EmpListing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  // const [isMenuVisible, setIsMenuVisible] = useState(false);
   const handlePageChange = (page: number) => setCurrentPage(page);
 
   const [activeId, setActiveId] = useState<number | null>(null); // حالة لتخزين id العنصر المحدد
@@ -36,7 +36,7 @@ const EmpListing = () => {
   // start pagination
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const rowsPerPage = 6;
 
   // حساب عدد الصفحات
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -76,7 +76,7 @@ const EmpListing = () => {
 
   if (error) {
     return <div>{error}</div>;
-}
+  }
 
   const renderSkeleton = () =>
     Array(rowsPerPage)
@@ -171,25 +171,29 @@ const EmpListing = () => {
 
                         <div></div>
                       </td>
-                      <td className="p-3 space-x-5 text-center border-b border-slate-300">
-                        {/* <button className="">
-                      <MdModeEdit />
-                    </button>
-                    <button className="text-red-600">
-                      <FaTrashAlt />
-                    </button> */}
-                        <button onClick={() => toggleOptionsMenu(data.id)}>
+                      <td className="relative p-3 space-x-5 text-center border-b border-slate-300">
+                        <button
+                          className="cursor-pointer "
+                          onClick={() => toggleOptionsMenu(data.id)}
+                        >
                           ...
                         </button>
-                        <div
-                          className={`grid grid-cols-1 border-[1px]  rounded ${
-                            activeId === data.id ? "block" : "hidden"
-                          }
-                      }`}
-                        >
-                          <span className="border-b ">delete</span>
-                          <span>edit</span>
-                        </div>
+                        {activeId === data.id && (
+                          <div
+                            className={`absolute grid grid-cols-1 w-28 border-[1px] rounded shadow-lg bg-white left-0.5 transform -translate-x-2/3  z-10 `}
+                          >
+                            <ul className="">
+                              <li className="p-2 py-1 grid grid-cols-2 space-x-0 cursor-pointer  text-red-600  hover:bg-gray-100 ">
+                                {" "}
+                                <MdModeEdit />
+                                delete
+                              </li>
+                              <li className=" text-gray-700 p-2 py-1 grid grid-cols-2 cursor-pointer hover:bg-gray-100">
+                                <FaTrashAlt /> edit
+                              </li>
+                            </ul>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
