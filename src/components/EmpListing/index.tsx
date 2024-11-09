@@ -23,14 +23,10 @@ type users = {
 const EmpListing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [isMenuVisible, setIsMenuVisible] = useState(false);
   const handlePageChange = (page: number) => setCurrentPage(page);
-
-  const [activeId, setActiveId] = useState<number | null>(null); // حالة لتخزين id العنصر المحدد
-
+  const [activeId, setActiveId] = useState<number | null>(null); 
   const toggleOptionsMenu = (id: number) => {
-    setActiveId((prevActiveId) => (prevActiveId === id ? null : id));
-    // setIsMenuVisible(!isMenuVisible); // تغيير حالة العنصر أو إخفاؤه إذا كان نفس id
+    setActiveId(activeId === id ? null : id);
   };
 
   // start pagination
@@ -52,7 +48,7 @@ const EmpListing = () => {
   //     .then((res) => res.json())
   //     .then((data) => setData(data.users))
   //     .catch((error) => console.error("Failed to fetch users:", error));
-  // }, []);
+  // }, []); 
 
   useEffect(() => {
     const fetchData = async () => {
