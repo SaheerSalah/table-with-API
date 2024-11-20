@@ -43,13 +43,6 @@ const EmpListing = () => {
     currentPage * rowsPerPage
   );
 
-  // useEffect(() => {
-  //   fetch("https://dummyjson.com/users")
-  //     .then((res) => res.json())
-  //     .then((data) => setData(data.users))
-  //     .catch((error) => console.error("Failed to fetch users:", error));
-  // }, []);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -74,25 +67,23 @@ const EmpListing = () => {
     return <div>{error}</div>;
   }
 
-  const deleteUser = (id: number) => {
-    fetch(`https://dummyjson.com/users/${id}`, {
-      method: "DELETE",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to delete the user");
-        }
-        return response.json();
-      })
-      .then((deletedUser) => {
-        console.log("User deleted:", deletedUser);
-        setUsers((prevUsers) =>
-          prevUsers.filter((user: users) => user.id !== deletedUser.id)
-        );
-      })
-      .catch((error) => {
-        console.error("Error deleting user:", error);
+  const deleteUser = async (id: number) => {
+    try {
+      const response = await fetch(`https://dummyjson.com/users/${id}`, {
+        method: "DELETE",
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch users.");
+      }
+      const deletedUser = await response.json();
+      setUsers((prevUsers) =>
+        prevUsers
+          ? prevUsers.filter((user: users) => user.id !== deletedUser.id)
+          : []
+      );
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
 
   const renderSkeleton = () =>
@@ -234,6 +225,13 @@ const EmpListing = () => {
 };
 
 export default EmpListing;
+
+// useEffect(() => {
+//   fetch("https://dummyjson.com/users")
+//     .then((res) => res.json())
+//     .then((data) => setData(data.users))
+//     .catch((error) => console.error("Failed to fetch users:", error));
+// }, []);
 
 // className={`inline-block items-center px-1   border rounded-full font-medium  ${
 //   data.role == "admin"
