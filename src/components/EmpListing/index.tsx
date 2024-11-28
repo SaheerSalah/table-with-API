@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import { MdNavigateNext } from "react-icons/md";
 import { MdModeEdit } from "react-icons/md";
 import { FaTrashAlt } from "react-icons/fa";
@@ -43,15 +44,15 @@ const EmpListing = () => {
     currentPage * rowsPerPage
   );
 
+  const api = axios.create({
+    baseURL:"https://dummyjson.com"
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://dummyjson.com/users");
-        if (!response.ok) {
-          throw new Error("Failed to fetch users.");
-        }
-        const result = await response.json();
-        setUsers(result.users);
+        const response = await api.get("/users");
+        setUsers(response.data.users);
       } catch (error) {
         console.error("Failed to fetch users:", error);
         // setError(error.message);
@@ -59,7 +60,6 @@ const EmpListing = () => {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -69,13 +69,8 @@ const EmpListing = () => {
 
   const deleteUser = async (id: number) => {
     try {
-      const response = await fetch(`https://dummyjson.com/users/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch users.");
-      }
-      const deletedUser = await response.json();
+      const response = await api.delete(`/users/${id}`);
+      const deletedUser = response.data;
       setUsers((prevUsers) =>
         prevUsers
           ? prevUsers.filter((user: users) => user.id !== deletedUser.id)
