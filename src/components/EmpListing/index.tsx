@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { MdNavigateNext } from "react-icons/md";
+import { IoSearch } from "react-icons/io5";
 import { MdModeEdit } from "react-icons/md";
 import { FaTrashAlt } from "react-icons/fa";
+import { IoFilter } from "react-icons/io5";
 import Image from "next/image";
 import Pagination from "../Pagination";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -12,7 +14,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 type Company = {
   name: string;
 };
-type users = {
+type Users = {
   id: number;
   firstName: string;
   role: "admin" | "moderator" | "user";
@@ -23,6 +25,8 @@ type users = {
 };
 const EmpListing = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  // const [resultSearch, setResultSearch] = useState([]);
   const [error, setError] = useState(null);
   const handlePageChange = (page: number) => setCurrentPage(page);
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -31,21 +35,20 @@ const EmpListing = () => {
   };
 
   // start pagination
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<Users[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 6;
 
   // حساب عدد الصفحات
-  const totalPages = Math.ceil(users.length / rowsPerPage);
+  const totalPages = Math.ceil(users && users.length / rowsPerPage);
 
   // حساب البيانات التي يجب عرضها في الصفحة الحالية
-  const currentData = users.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+  const currentData =
+    users &&
+    users.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   const api = axios.create({
-    baseURL:"https://dummyjson.com"
+    baseURL: "https://dummyjson.com",
   });
 
   useEffect(() => {
@@ -73,13 +76,45 @@ const EmpListing = () => {
       const deletedUser = response.data;
       setUsers((prevUsers) =>
         prevUsers
-          ? prevUsers.filter((user: users) => user.id !== deletedUser.id)
+          ? prevUsers.filter((user: Users) => user.id !== deletedUser.id)
           : []
       );
     } catch (error) {
       console.error("Error deleting user:", error);
     }
   };
+  const editUser = async (id: number) => {
+    try {
+      const response = await api.put(`/users/${id}`, {
+        firstName: "saheer",
+      });
+      const editedUser = response.data;
+      setUsers((prevUsers) =>
+        prevUsers.map((user: Users) =>
+          user.id === editedUser.id ? { ...user, ...editedUser } : user
+        )
+      );
+    } catch (error) {
+      console.error("Error editing user:", error);
+    }
+  };
+
+  const fetchSearchResults = async () => {
+    try {
+      const response = await api.get(`/users/search`, {
+        params: { q: searchTerm },
+      });
+      setUsers(response.data.users);
+    } catch (error) {
+      console.error("Error editing user:", error);
+    }
+  };
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchSearchResults();
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
 
   const renderSkeleton = () =>
     Array(rowsPerPage)
@@ -103,17 +138,32 @@ const EmpListing = () => {
           </td>
         </tr>
       ));
-
   return (
     <div className="container">
+      {/* onClick={() => toggleOptionsMenu(2)} */}
       <div className="">
         <div className="card"></div>
+        <div className="mb-2 flex ">
+        <div className="relative">
+        <IoSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400" />
+          <input
+            type="search"
+            placeholder="Search by name..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border  rounded-md border-gray-400 text-gray-700 mr-3 p-1 pl-7"
+          />
+          </div>
+          <button className="grid grid-cols-2 bg-gray-200 border rounded-md p-1">
+            <IoFilter /> Filter
+          </button>
+        </div>
         <div className="mx-auto mb-16 relative overflow-x-auto">
           {/* border-collapse border  border-slate-400 */}
           <table className="  font-sans shadow-lg w-full min-w-max table-auto text-gray-500 ">
-            <caption className="caption-top mb-4">
+            {/* <caption className="caption-top mb-4">
               Table 3.1: Professional Employee Listing.
-            </caption>
+            </caption> */}
             <thead className="text-gray-700 uppercase ">
               <tr className="bg-gray-100  ">
                 {/* <th className="px-10 border-b border-slate-300">ID</th> */}
@@ -138,7 +188,8 @@ const EmpListing = () => {
             <tbody className="">
               {isLoading
                 ? renderSkeleton()
-                : currentData.map((data: users) => (
+                : currentData &&
+                  currentData?.map((data: Users) => (
                     <tr
                       key={data.id}
                       className="odd:bg-white even:bg-gray-50 cursor-pointer"
@@ -194,7 +245,10 @@ const EmpListing = () => {
                                 <MdModeEdit />
                                 delete
                               </li>
-                              <li className=" text-gray-700 p-2 py-1 grid grid-cols-2 cursor-pointer hover:bg-gray-100">
+                              <li
+                                className=" text-gray-700 p-2 py-1 grid grid-cols-2 cursor-pointer hover:bg-gray-100"
+                                onClick={() => editUser(data.id)}
+                              >
                                 <FaTrashAlt /> edit
                               </li>
                             </ul>
