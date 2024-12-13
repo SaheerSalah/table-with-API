@@ -6,6 +6,8 @@ import { IoSearch } from "react-icons/io5";
 import { MdModeEdit } from "react-icons/md";
 import { FaTrashAlt } from "react-icons/fa";
 import { IoFilter } from "react-icons/io5";
+import { FaSortUp } from "react-icons/fa";
+import { FaSortDown } from "react-icons/fa";
 import Image from "next/image";
 import Pagination from "../Pagination";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -26,7 +28,7 @@ type Users = {
 const EmpListing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  // const [resultSearch, setResultSearch] = useState([]);
+  const [sortOrder, setSortOrder] = useState<string>();
   const [error, setError] = useState(null);
   const handlePageChange = (page: number) => setCurrentPage(page);
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -91,7 +93,7 @@ const EmpListing = () => {
       const editedUser = response.data;
       setUsers((prevUsers) =>
         prevUsers.map((user: Users) =>
-          user.id === editedUser.id ? { ...user, ...editedUser } : user
+          user.id === editedUser.id ? editedUser : user
         )
       );
     } catch (error) {
@@ -106,15 +108,30 @@ const EmpListing = () => {
       });
       setUsers(response.data.users);
     } catch (error) {
-      console.error("Error editing user:", error);
+      console.error("Error search for  user:", error);
     }
   };
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
+    const delayDebounce = setTimeout(() => {
       fetchSearchResults();
     }, 500);
-    return () => clearTimeout(delayDebounceFn);
+    return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
+
+  const sortByFirstName = async (order: string) => {
+    setIsLoading(true);
+    try {
+      const response = await api.get(`/users`, {
+        params: { sortBy: "firstName", order: order },
+      });
+      setUsers(response.data.users);
+      setSortOrder(order);
+    } catch (error) {
+      console.error("Error search for  user:", error);
+    }finally {
+      setIsLoading(false);
+    }
+  };
 
   const renderSkeleton = () =>
     Array(rowsPerPage)
@@ -144,15 +161,15 @@ const EmpListing = () => {
       <div className="">
         <div className="card"></div>
         <div className="mb-2 flex ">
-        <div className="relative">
-        <IoSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400" />
-          <input
-            type="search"
-            placeholder="Search by name..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border  rounded-md border-gray-400 text-gray-700 mr-3 p-1 pl-7"
-          />
+          <div className="relative">
+            <IoSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="search"
+              placeholder="Search by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border  rounded-md border-gray-400 text-gray-700 mr-3 p-1 pl-7"
+            />
           </div>
           <button className="grid grid-cols-2 bg-gray-200 border rounded-md p-1">
             <IoFilter /> Filter
@@ -167,8 +184,22 @@ const EmpListing = () => {
             <thead className="text-gray-700 uppercase ">
               <tr className="bg-gray-100  ">
                 {/* <th className="px-10 border-b border-slate-300">ID</th> */}
-                <th className="p-3 font-semibold border-b border-slate-300 text-start">
-                  NAME
+                <th className="flex p-3 font-semibold border-b border-slate-300 text-start">
+                  <span>NAME </span>
+                  <div className="text-gray-400">
+                    <span
+                      className={`cursor-pointer ${sortOrder==="asc"?"text-gray-700":""}`}
+                      onClick={() => sortByFirstName("asc")}
+                    >
+                      <FaSortUp />
+                    </span>
+                    <span
+                      className={`cursor-pointer ${sortOrder==="desc"?"text-gray-700":""}`}
+                      onClick={() => sortByFirstName("desc")}
+                    >
+                      <FaSortDown />
+                    </span>
+                  </div>
                 </th>
                 {/* <th className="px-10 border border-slate-300">EMAIL</th> */}
                 <th className="p-3 font-semibold border-b border-slate-300 text-start">
@@ -189,7 +220,7 @@ const EmpListing = () => {
               {isLoading
                 ? renderSkeleton()
                 : currentData &&
-                  currentData?.map((data: Users) => (
+                  currentData.map((data: Users) => (
                     <tr
                       key={data.id}
                       className="odd:bg-white even:bg-gray-50 cursor-pointer"
