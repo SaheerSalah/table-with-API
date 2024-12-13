@@ -26,6 +26,19 @@ type Users = {
   company: Company;
 };
 const EmpListing = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const selectOption = (value:string) => {
+    setSelectedOption(value);
+    setIsOpen(false); // إخفاء القائمة بعد الاختيار
+  };
+
+  
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<string>();
@@ -128,7 +141,20 @@ const EmpListing = () => {
       setSortOrder(order);
     } catch (error) {
       console.error("Error search for  user:", error);
-    }finally {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const filterUsers = async (Role: string) => {
+    setIsLoading(true);
+    try {
+      const response = await api.get(`/users/filter`, {
+        params: { key: "role", value: Role },
+      });
+      setUsers(response.data.users);
+    } catch (error) {
+      console.error("Error search for  user:", error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -171,9 +197,18 @@ const EmpListing = () => {
               className="border  rounded-md border-gray-400 text-gray-700 mr-3 p-1 pl-7"
             />
           </div>
-          <button className="grid grid-cols-2 bg-gray-200 border rounded-md p-1">
-            <IoFilter /> Filter
-          </button>
+          <div className="flex gap-3">
+            <select
+              className="bg-gray-100 border rounded-md p-1 "
+              onChange={(e) => filterUsers(e.target.value)}
+            >
+              <option className=""value="">All Roles</option>
+              <option className="" value="admin">Admin</option>
+              <option className="" value="moderator">Moderator</option>
+              <option className="" value="user">User</option>
+            </select>
+          </div>
+
         </div>
         <div className="mx-auto mb-16 relative overflow-x-auto">
           {/* border-collapse border  border-slate-400 */}
@@ -184,22 +219,29 @@ const EmpListing = () => {
             <thead className="text-gray-700 uppercase ">
               <tr className="bg-gray-100  ">
                 {/* <th className="px-10 border-b border-slate-300">ID</th> */}
-                <th className="flex p-3 font-semibold border-b border-slate-300 text-start">
+                <th className=" p-3 font-semibold border-b border-slate-300 text-start">
+                  <div className="flex">
                   <span>NAME </span>
                   <div className="text-gray-400">
                     <span
-                      className={`cursor-pointer ${sortOrder==="asc"?"text-gray-700":""}`}
+                      className={`cursor-pointer ${
+                        sortOrder === "asc" ? "text-gray-700" : ""
+                      }`}
                       onClick={() => sortByFirstName("asc")}
                     >
                       <FaSortUp />
                     </span>
                     <span
-                      className={`cursor-pointer ${sortOrder==="desc"?"text-gray-700":""}`}
+                      className={`cursor-pointer ${
+                        sortOrder === "desc" ? "text-gray-700" : ""
+                      }`}
                       onClick={() => sortByFirstName("desc")}
                     >
                       <FaSortDown />
                     </span>
                   </div>
+                  </div>
+                  
                 </th>
                 {/* <th className="px-10 border border-slate-300">EMAIL</th> */}
                 <th className="p-3 font-semibold border-b border-slate-300 text-start">
@@ -305,6 +347,78 @@ const EmpListing = () => {
 };
 
 export default EmpListing;
+
+
+// <div className="relative inline-block w-64">
+//       <button
+//         className="w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+//         onClick={toggleDropdown}
+//         value={selectedOption}
+//         onChange={(e) => filterUsers(e.target.value)}
+//       >
+//         {selectedOption || "Select an option"}
+//       </button>
+//       {isOpen && (
+//         <ul className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+//         <li
+//             className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+//             onClick={() => selectOption("admin")}
+//             value="admin"
+//           >
+//             Admin
+//           </li>
+//           <li
+//             className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+//             onClick={() => selectOption("moderator")}
+//             value="moderator"
+//           >
+//             Moderator
+//           </li>
+//           <li
+//             className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+//             onClick={() => selectOption("user")}
+//             value="user"
+//           >
+//             User
+//           </li>
+//         </ul>
+//       )}
+//     </div>
+
+
+
+
+          {/*  */}
+
+
+          {/* <div
+            className="relative"
+          >
+            <div className="cursor-pointer p-2 border border-gray-300 rounded-md bg-white">
+              Select an option
+            </div>
+            <ul className="absolute w-full mt-1 bg-white border border-gray-300 rounded-md shadow-md">
+              <li className="p-2 py-1 grid grid-cols-2 space-x-0 cursor-pointer  text-red-600  hover:bg-gray-100 ">
+                delete
+              </li>
+              <li className=" text-gray-700 p-2 py-1 grid grid-cols-2 cursor-pointer hover:bg-gray-100">
+                edit
+              </li>
+            </ul>
+          </div> */}
+
+          {/* <div className="relative">
+            <div className="cursor-pointer p-2 border border-gray-300 rounded-md bg-white">
+              Select an option
+            </div>
+            <div className="absolute w-full mt-1 bg-white border border-gray-300 rounded-md shadow-md">
+              <div className="p-2 hover:bg-gray-100">Admin</div>
+              <div className="p-2 hover:bg-gray-100">Moderator</div>
+              <div className="p-2 hover:bg-gray-100">User</div>
+            </div>
+          </div> */}
+ 
+
 
 // useEffect(() => {
 //   fetch("https://dummyjson.com/users")
