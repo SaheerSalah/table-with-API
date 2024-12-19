@@ -26,19 +26,6 @@ type Users = {
   company: Company;
 };
 const EmpListing = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const selectOption = (value:string) => {
-    setSelectedOption(value);
-    setIsOpen(false); // إخفاء القائمة بعد الاختيار
-  };
-
-  
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<string>();
@@ -347,6 +334,8 @@ const EmpListing = () => {
 };
 
 export default EmpListing;
+
+// the end 
 
 
 // <div className="relative inline-block w-64">
