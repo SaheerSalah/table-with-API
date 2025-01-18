@@ -173,7 +173,7 @@ const EmpListing = () => {
       {/* onClick={() => toggleOptionsMenu(2)} */}
       <div className="">
         <div className="card"></div>
-        <div className="mb-2 flex ">
+        <div className="mb-2 flex gap-3 overflow-hidden">
           <div className="relative">
             <IoSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -181,21 +181,28 @@ const EmpListing = () => {
               placeholder="Search by name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="border  rounded-md border-gray-400 text-gray-700 mr-3 p-1 pl-7"
+              className="  w-full border  rounded-md border-gray-400 text-gray-700 mr-3 p-1 pl-7"
             />
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 ">
             <select
-              className="bg-gray-100 border rounded-md p-1 "
+              className="bg-gray-100 border rounded-md p-1 w-auto "
               onChange={(e) => filterUsers(e.target.value)}
             >
-              <option className=""value="">All Roles</option>
-              <option className="" value="admin">Admin</option>
-              <option className="" value="moderator">Moderator</option>
-              <option className="" value="user">User</option>
+              <option className="" value="">
+                All Roles
+              </option>
+              <option className="" value="admin">
+                Admin
+              </option>
+              <option className="" value="moderator">
+                Moderator
+              </option>
+              <option className="" value="user">
+                User
+              </option>
             </select>
           </div>
-
         </div>
         <div className="mx-auto mb-16 relative overflow-x-auto">
           {/* border-collapse border  border-slate-400 */}
@@ -208,27 +215,26 @@ const EmpListing = () => {
                 {/* <th className="px-10 border-b border-slate-300">ID</th> */}
                 <th className=" p-3 font-semibold border-b border-slate-300 text-start">
                   <div className="flex">
-                  <span>NAME </span>
-                  <div className="text-gray-400">
-                    <span
-                      className={`cursor-pointer ${
-                        sortOrder === "asc" ? "text-gray-700" : ""
-                      }`}
-                      onClick={() => sortByFirstName("asc")}
-                    >
-                      <FaSortUp />
-                    </span>
-                    <span
-                      className={`cursor-pointer ${
-                        sortOrder === "desc" ? "text-gray-700" : ""
-                      }`}
-                      onClick={() => sortByFirstName("desc")}
-                    >
-                      <FaSortDown />
-                    </span>
+                    <span>NAME </span>
+                    <div className="text-gray-400">
+                      <span
+                        className={`cursor-pointer ${
+                          sortOrder === "asc" ? "text-gray-700" : ""
+                        }`}
+                        onClick={() => sortByFirstName("asc")}
+                      >
+                        <FaSortUp />
+                      </span>
+                      <span
+                        className={`cursor-pointer ${
+                          sortOrder === "desc" ? "text-gray-700" : ""
+                        }`}
+                        onClick={() => sortByFirstName("desc")}
+                      >
+                        <FaSortDown />
+                      </span>
+                    </div>
                   </div>
-                  </div>
-                  
                 </th>
                 {/* <th className="px-10 border border-slate-300">EMAIL</th> */}
                 <th className="p-3 font-semibold border-b border-slate-300 text-start">
@@ -335,8 +341,7 @@ const EmpListing = () => {
 
 export default EmpListing;
 
-// the end 
-
+// the end
 
 // <div className="relative inline-block w-64">
 //       <button
@@ -374,13 +379,12 @@ export default EmpListing;
 //       )}
 //     </div>
 
+{
+  /*  */
+}
 
-
-
-          {/*  */}
-
-
-          {/* <div
+{
+  /* <div
             className="relative"
           >
             <div className="cursor-pointer p-2 border border-gray-300 rounded-md bg-white">
@@ -394,9 +398,11 @@ export default EmpListing;
                 edit
               </li>
             </ul>
-          </div> */}
+          </div> */
+}
 
-          {/* <div className="relative">
+{
+  /* <div className="relative">
             <div className="cursor-pointer p-2 border border-gray-300 rounded-md bg-white">
               Select an option
             </div>
@@ -405,9 +411,8 @@ export default EmpListing;
               <div className="p-2 hover:bg-gray-100">Moderator</div>
               <div className="p-2 hover:bg-gray-100">User</div>
             </div>
-          </div> */}
- 
-
+          </div> */
+}
 
 // useEffect(() => {
 //   fetch("https://dummyjson.com/users")
