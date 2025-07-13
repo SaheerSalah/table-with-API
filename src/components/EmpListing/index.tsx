@@ -49,6 +49,26 @@ const EmpListing = () => {
     users &&
     users.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
+  const [isOnline, setIsOnline] = useState<boolean | null>(null);
+  useEffect(()=>{
+    setIsOnline(navigator.onLine)
+  },[])
+
+  
+  useEffect(() =>{
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online",handleOnline);
+    window.addEventListener("offline",handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+
+  },[])
+ 
   const api = axios.create({
     baseURL: "https://dummyjson.com",
   });
@@ -145,6 +165,8 @@ const EmpListing = () => {
       setIsLoading(false);
     }
   };
+  if (isOnline === null) return null;
+
 
   const renderSkeleton = () =>
     Array(rowsPerPage)
@@ -189,7 +211,7 @@ const EmpListing = () => {
               className="bg-gray-100 border rounded-md p-1 w-auto "
               onChange={(e) => filterUsers(e.target.value)}
             >
-              <option className="" value="">
+              <option className="" >
                 All Roles
               </option>
               <option className="" value="admin">
@@ -203,24 +225,27 @@ const EmpListing = () => {
               </option>
             </select>
           </div>
+      
         </div>
         <div className="mx-auto mb-16 relative overflow-x-auto">
           {/* border-collapse border  border-slate-400 */}
           <table className="  font-sans shadow-lg w-full min-w-max table-auto text-gray-500 ">
-            {/* <caption className="caption-top mb-4">
-              Table 3.1: Professional Employee Listing.
-            </caption> */}
+             <caption className="caption-top mb-4">
+              {!isOnline && (<div className="flex items-center justify-center bg-red-100 text-red-700 p-2 rounded text-center w-[30%]">⚠️ no internet connection</div>)}
+            
+            </caption> 
+             
             <thead className="text-gray-700 uppercase ">
               <tr className="bg-gray-100  ">
                 {/* <th className="px-10 border-b border-slate-300">ID</th> */}
                 <th className=" p-3 font-semibold border-b border-slate-300 text-start">
                   <div className="flex">
                     <span>NAME </span>
-                    <div className="text-gray-400">
+                    <div className="text-gray-400 flex flex-col items-center ml-1 ">
                       <span
                         className={`cursor-pointer ${
                           sortOrder === "asc" ? "text-gray-700" : ""
-                        }`}
+                        } -mb-1`}
                         onClick={() => sortByFirstName("asc")}
                       >
                         <FaSortUp />
@@ -228,7 +253,7 @@ const EmpListing = () => {
                       <span
                         className={`cursor-pointer ${
                           sortOrder === "desc" ? "text-gray-700" : ""
-                        }`}
+                        } -mt-1`}
                         onClick={() => sortByFirstName("desc")}
                       >
                         <FaSortDown />
