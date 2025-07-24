@@ -224,20 +224,16 @@ const EmpListing = () => {
             </select>
           </div>
           {!isOnline && (<div className="flex items-center justify-center bg-red-100 text-red-700 p-2 rounded text-center w-[30%]">⚠️ no internet connection</div>)}
-
-      
         </div>
         <div className="mx-auto mb-16 relative overflow-x-auto">
           {/* border-collapse border  border-slate-400 */}
-          <table className="  font-sans shadow-lg w-full min-w-max table-auto text-gray-500 ">
-             {/* <caption className="caption-top mb-4">
-            
+          <table className=" table-fixed font-sans shadow-lg w-full min-w-max  text-gray-500 ">
+             {/* <caption className="caption-top mb-4">            
             </caption>  */}
-             
             <thead className="text-gray-700 uppercase ">
               <tr className="bg-gray-100  ">
                 {/* <th className="px-10 border-b border-slate-300">ID</th> */}
-                <th className=" p-3 font-semibold border-b border-slate-300 text-start">
+                <th className="w-[30%]  p-3 font-semibold border-b border-slate-300 text-start">
                   <div className="flex">
                     <span>NAME </span>
                     <div className="text-gray-400 flex flex-col items-center ml-1 ">
@@ -261,16 +257,16 @@ const EmpListing = () => {
                   </div>
                 </th>
                 {/* <th className="px-10 border border-slate-300">EMAIL</th> */}
-                <th className="p-3 font-semibold border-b border-slate-300 text-start">
+                <th className="w-[20%] p-3 font-semibold border-b border-slate-300 text-start">
                   PHONE
                 </th>
-                <th className="p-3 font-semibold border-b border-slate-300 text-start">
+                <th className="w-[12%] p-3 font-semibold border-b border-slate-300 text-start">
                   ROLE
                 </th>
-                <th className="p-3 font-semibold border-b border-slate-300 text-start">
+                <th className="w-[28%] p-3 font-semibold border-b border-slate-300 text-start">
                   company
                 </th>
-                <th className="p-3 font-semibold border-b border-slate-300 text-start">
+                <th className="w-[8%] p-3 font-semibold border-b border-slate-300 text-start">
                   Menu
                 </th>
               </tr>
