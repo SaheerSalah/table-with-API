@@ -50,23 +50,21 @@ const EmpListing = () => {
     users.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
-  useEffect(()=>{
-    setIsOnline(navigator.onLine)
-  },[])
-
-  
   useEffect(() =>{
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    if(typeof window !== "undefined"){
+      setIsOnline(navigator.onLine);
 
-    window.addEventListener("online",handleOnline);
-    window.addEventListener("offline",handleOffline);
+      const handleOnline = () => setIsOnline(true);
+      const handleOffline = () => setIsOnline(false);
 
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
+      window.addEventListener("online",handleOnline);
+      window.addEventListener("offline",handleOffline);
 
+      return () => {
+        window.removeEventListener("online", handleOnline);
+        window.removeEventListener("offline", handleOffline);
+      };
+    }  
   },[])
  
   const api = axios.create({
@@ -225,15 +223,16 @@ const EmpListing = () => {
               </option>
             </select>
           </div>
+          {!isOnline && (<div className="flex items-center justify-center bg-red-100 text-red-700 p-2 rounded text-center w-[30%]">⚠️ no internet connection</div>)}
+
       
         </div>
         <div className="mx-auto mb-16 relative overflow-x-auto">
           {/* border-collapse border  border-slate-400 */}
           <table className="  font-sans shadow-lg w-full min-w-max table-auto text-gray-500 ">
-             <caption className="caption-top mb-4">
-              {!isOnline && (<div className="flex items-center justify-center bg-red-100 text-red-700 p-2 rounded text-center w-[30%]">⚠️ no internet connection</div>)}
+             {/* <caption className="caption-top mb-4">
             
-            </caption> 
+            </caption>  */}
              
             <thead className="text-gray-700 uppercase ">
               <tr className="bg-gray-100  ">
